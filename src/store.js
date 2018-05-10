@@ -6,15 +6,18 @@ import { routerMiddleware } from 'react-router-redux'
 import thunk from 'redux-thunk'
 import logger from 'redux-logger'
 import createHistory from 'history/createBrowserHistory'
+import createSagaMiddleware from 'redux-saga'
 import rootReducer from './modules'
 
 export const history = createHistory()
 
 const initialState = {}
 const enhancers = []
+export const sagaMiddleware = createSagaMiddleware()
 let middleware = [
   thunk,
-  routerMiddleware(history)
+  routerMiddleware(history),
+  sagaMiddleware
 ]
 
 if (process.env.NODE_ENV !== 'production') {

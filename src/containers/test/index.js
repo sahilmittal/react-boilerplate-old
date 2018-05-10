@@ -7,13 +7,15 @@ import PropTypes from 'prop-types'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 
-import { testAction } from '../../modules/test'
-import Loader from '../../components/loader'
+import { addMessage } from '../../modules/test'
+// import Loader from '../../components/loader'
 
 const propTypes = {
-  testAction: PropTypes.func.isRequired,
+  addMessage: PropTypes.func.isRequired,
   data: PropTypes.array.isRequired
 }
+
+let input
 
 class Test extends React.Component {
 
@@ -31,18 +33,40 @@ class Test extends React.Component {
   render () {
     return (
       <div>
-        <Loader />
+        <input
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              this.props.addMessage(input.value)
+              input.value = ''
+            }
+          }}
+          type="text"
+          ref={(node) => {
+            input = node
+          }}
+        />
+
+        <section>
+          <ul>
+          {this.props.messages.map(message => (
+            <div key={message.id}>
+              {message.message}
+            </div>
+          ))}
+          </ul>
+        </section>
+
       </div>
     )
   }
 } 
 
 const mapStateToProps = state => ({
-  data: state.test.data
+  messages: state.test
 })
 
 const mapDispatchToProps = dispatch => bindActionCreators({
-  testAction
+  addMessage
 }, dispatch)
 
 Test.propTypes = propTypes

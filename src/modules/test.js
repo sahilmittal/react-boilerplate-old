@@ -5,21 +5,19 @@
 import axios from 'axios'
 import Test from '../models/test'
 
-export const TEST_SUCCESS = 'TEST/TEST_SUCCESS'
-export const TEST_FAILED = 'TEST/TEST_FAILED'
+export const ADD_MESSAGE = 'TEST/ADD_MESSAGE'
+export const MESSAGE_RECEIVED = 'TEST/MESSAGE_RECEIVED'
 
-const initialState = {
-  data: new Test()
-}
+let nextMessageId = 0
+
+const initialState = []
 
 export default (state = initialState, action) => {
   switch (action.type) {
 
-    case TEST_SUCCESS:
-      return {...state, data: new Test(action.id)}
-
-    case TEST_FAILED:
-      return {...state}
+    case ADD_MESSAGE:
+    case MESSAGE_RECEIVED:
+      return [...state, {id: action.id, message: action.message}]
 
     default:
       return state
@@ -27,20 +25,24 @@ export default (state = initialState, action) => {
 }
 
 const actions = {
-  testSuccess: (id) => ({type: TEST_SUCCESS, id}),
-  testError: () => ({type: TEST_FAILED})
+  addMessage: (message) => ({type: ADD_MESSAGE, id: nextMessageId++, message}),
+  messageReceived: (message) => ({type: MESSAGE_RECEIVED, id: nextMessageId++, message}),
 }
 
 /**
- *  Action: 'testAction'
+ *  Action: 'addMessage'
  */
-export const testAction = () => {
+export const addMessage = (message) => {
   return dispatch => {
-    return axios.post('/test').then(
-      res => dispatch(actions.testSuccess(1)),
-      err => dispatch(actions.testError())
-    ).catch(
-      err => dispatch(actions.testError())
-    )
+    dispatch(actions.addMessage(message))
+  }
+}
+
+/**
+ *  Action: 'messageReceived'
+ */
+export const messageReceived = (message) => {
+  return dispatch => {
+    dispatch(actions.messageReceived(message))
   }
 }
